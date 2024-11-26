@@ -359,6 +359,7 @@ class VannaFlaskAPI:
         def generate_rewritten_question(user: any):
             """
             Generate a rewritten question
+            生成重写问题
             ---
             parameters:
               - name: last_question
@@ -383,6 +384,7 @@ class VannaFlaskAPI:
         def get_function(user: any):
             """
             Get a function from a question
+            从问题直接生成一个对应的SQL查询语句
             ---
             parameters:
               - name: user
@@ -789,6 +791,7 @@ class VannaFlaskAPI:
         def add_training_data(user: any):
             """
             Add training data
+            增加训练数据
             ---
             parameters:
               - name: user
@@ -817,6 +820,7 @@ class VannaFlaskAPI:
             sql = flask.request.json.get("sql")
             ddl = flask.request.json.get("ddl")
             documentation = flask.request.json.get("documentation")
+
 
             try:
                 id = vn.train(
@@ -993,6 +997,7 @@ class VannaFlaskAPI:
         def generate_summary(user: any, id: str, df, question):
             """
             Generate summary
+            生成摘要
             ---
             parameters:
               - name: user
