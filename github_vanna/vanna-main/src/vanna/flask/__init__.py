@@ -227,6 +227,7 @@ class VannaFlaskAPI:
         def generate_questions(user: any):
             """
             Generate questions
+            生成推荐问题
             ---
             parameters:
               - name: user
@@ -305,6 +306,7 @@ class VannaFlaskAPI:
         def generate_sql(user: any):
             """
             Generate SQL from a question
+            处理生成SQL请求，接受一个问题并基于该问题生成SQL查询（生成SQL查询本身）
             ---
             parameters:
               - name: user
@@ -384,7 +386,7 @@ class VannaFlaskAPI:
         def get_function(user: any):
             """
             Get a function from a question
-            从问题直接生成一个对应的SQL查询语句
+            从问题直接生成一个对应的SQL查询语句（生成的是一个包含SQL查询的函数）
             ---
             parameters:
               - name: user
@@ -820,11 +822,11 @@ class VannaFlaskAPI:
             sql = flask.request.json.get("sql")
             ddl = flask.request.json.get("ddl")
             documentation = flask.request.json.get("documentation")
-
+            Question = flask.request.json.get("Question")
 
             try:
                 id = vn.train(
-                    question=question, sql=sql, ddl=ddl, documentation=documentation
+                    question=question, sql=sql, ddl=ddl, documentation=documentation, Question=Question
                 )
 
                 return jsonify({"id": id})
@@ -864,7 +866,7 @@ class VannaFlaskAPI:
             if plotly_code is None:
                 plotly_code = ""
 
-            function_data = self.vn.create_function(question=question, sql=sql, plotly_code=plotly_code)
+            function_data = self.vn.create_function(question=question, sql=sql,plotly_code=plotly_code)
 
             return jsonify(
                 {
@@ -940,6 +942,7 @@ class VannaFlaskAPI:
         def generate_followup_questions(user: any, id: str, df, question, sql):
             """
             Generate followup questions
+            生成后续问题的API
             ---
             parameters:
               - name: user
