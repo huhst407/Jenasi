@@ -43,7 +43,7 @@ def add_training_data():
 vanna_app.run()
 
 
-@app.route("/api/v0/generate_sql", methods=["GET"])
+'''@app.route("/api/v0/generate_sql", methods=["GET"])
 def generate_sql(user: any):
         """
         Generate SQL from a question
@@ -77,6 +77,7 @@ def generate_sql(user: any):
                 }
             )
 
+'''
 '''
 @self.flask_app.route("/api/v0/get_function", methods=["GET"])
         @self.requires_auth
