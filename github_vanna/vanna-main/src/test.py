@@ -2,14 +2,13 @@ import plotly
 from flask import Flask, jsonify,request
 from kaleido.scopes import plotly
 import pandas as pd
-import vanna.flask as vanna_flask
 import plotly.express as px
 from vanna.remote import VannaDefault
 from vanna.flask import VannaFlaskApp
 
 app = Flask(__name__)
 
-m_vn = VannaDefault(model='chinook', api_key='253e0c6afda74a15bcaa5e81e24e67ee')
+m_vn = VannaDefault(model='chinook', api_key='6f5fd368575d43bcb4a23ba10ccb0b27')
 m_vn.connect_to_sqlite('https://vanna.ai/Chinook.sqlite')
 
 vanna_app = VannaFlaskApp(m_vn)
