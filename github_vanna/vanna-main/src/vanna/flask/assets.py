@@ -46,9 +46,11 @@ html_content = '''<!DOCTYPE html>
                     <button id="submitQuestion">Submit</button>
                 </section>
             </header>
+
             <!--侧边栏选择的内容页面-->
             <section id="contentArea">
                 <!-- Content will be loaded here based on the sidebar selection -->
+                <!--Function页面内容-->
                 <h1>Functions</h1>
                 <p>No functions found</p>
                 <div id="newFunctionBox" class="function-box">
@@ -56,6 +58,22 @@ html_content = '''<!DOCTYPE html>
                     <p>Create a new function</p>
                     <button id="createButton">Create ></button>
                 </div>
+
+                <!--训练数据页面内容-->
+                <section id="trainingDataPage" class="training-data-page">
+                    <h1>Add Training Data</h1>
+                    <div id="trainingDataBox" class="training-box">
+                        <p>Training Data Type</p>
+                        <button id="DDLButton">DDL</button>
+                        <button id="DocumenButton">Documentation</button>
+                        <button id="SQLButton">SQL</button>
+                        <button id="QuestionButton">Question</button>
+                    </div>
+
+                    <p>Your SQL</p>
+                    <div id="inputBox" class="input-box">
+
+                    </div>
             </section>
         </div>
     </div>
@@ -73,7 +91,6 @@ body, html {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    height: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -81,7 +98,8 @@ body, html {
 /*布局样式*/
 .layout{
     display: flex;
-    height: 100%;
+    height: 100vh;
+    width: 100%;
 }
 
 /* 侧边栏样式 */
@@ -146,11 +164,12 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center; /*水平居中*/
+    flex-grow: 1;
     flex-direction: column; /*从上到下的布局*/
-    height: 100vh; /*沾满视觉高度*/
+    height: 100%; /*沾满视觉高度*/
     width: 80%;
     padding-top: 10vh;
-    margin-left: auto
+    margin-left: 0
     text-align: center;
     overflow-y: auto; /* 如果内容过长，可滚动 */
     background-color: #fff; /* 设置白色背景 */
@@ -289,6 +308,69 @@ footer {
     background-color: #f4f4f4;
 }
 
+/*训练数据页面样式设计*/
+.training-data-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.training-data-page h1 {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.button-options {
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+    margin-bottom: 20px;
+}
+
+.button-options button {
+    padding: 10px;
+    width: 200px;
+    font-size: 1.2em;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button-options button:hover {
+    background-color: #0056b3;
+}
+
+#inputBox {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap:15px;
+    padding: 20px;
+}
+
+.input-box {
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+}
+
+.input-box input {
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 300%;
+}
+
+.input-box label {
+    font-size: 1.2em;
+    color: #333;
+}
+
 '''
 
 js_content = '''
@@ -298,6 +380,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const trainingDataButton = document.getElementById('trainingDataButton');
     const newQuestionButton = document.getElementById('newQuestion');
     const createButton = document.getElementById('createButton');
+
+    const DDLButton = document.getElementById('DDLButton');
+    const DocumenButton = document.getElementById('DocumenButton');
+    const SQLButton = document.getElementById('SQLButton');
+    const QuestionButton=document.getElementById('QuestionButton');
+
+    const inputBox=document.getElementById('inputBox');
 
     //初始化，显示主页面内容
     toggleView('welcome');
@@ -327,21 +416,22 @@ document.addEventListener('DOMContentLoaded', function() {
         contentArea.style.display = 'none';
 
         if (viewId === 'welcome') {
-            // 显示主页面内容
-            header.style.display = 'block';
-            contentArea.innerHTML = ''; // 清空功能页面内容
-        } else {
-            // 隐藏主页面内容，显示其他页面
+        // 显示主页面内容
+        header.style.display = 'block';
+        contentArea.innerHTML = `
+            <section id="inputSection">
+                <input type="text" id="userInput" placeholder="Ask me a question about your data that I can turn into SQL.">
+                <button id="submitQuestion">Submit</button>
+            </section>
+        `;
+        } else if (viewId === 'functions') {
+            fetchFunctionsData(); // 加载功能页面
             contentArea.style.display = 'block';
-
-            // 根据页面类型加载内容
-            if (viewId === 'functions') {
-                fetchFunctionsData();
-            } else if (viewId === 'training-data') {
-                fetchTrainingData();
-            }
+        } else if (viewId === 'training-data') {
+            fetchTrainingData(); // 加载训练数据页面
+            contentArea.style.display = 'block';
         }
-    }
+}
 
     function fetchFunctionsData() {
         const contentArea = document.getElementById('contentArea');
@@ -357,6 +447,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         //绑定按钮点击事件
         const createButton = document.getElementById('createButton');
+        createButton.addEventListener('click', function() {
+            toggleView('welcome');
+        });
         fetch('/api/functions')
             .then((response) => response.json())
             .then((data) => {
@@ -367,6 +460,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function fetchTrainingData() {
         const contentArea = document.getElementById('contentArea');
+        contentArea.innerHTML = `
+            <h2>Training Data</h2>
+            <p>Choose the type of training data your want to add.</p>
+        `
         fetch('/api/training-data')
             .then((response) => response.json())
             .then((data) => {
