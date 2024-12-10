@@ -366,6 +366,18 @@ footer {
     width: 300%;
 }
 
+.input-box textarea {
+    width: 80%; /* 调整宽度 */
+    height: 120px; /* 增加高度 */
+    font-size: 1em;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none; /* 禁止拖动调整大小 */
+}
+
+
 .input-box label {
     font-size: 1.2em;
     color: #333;
@@ -379,6 +391,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const functionsButton = document.getElementById('functionsButton');
     const trainingDataButton = document.getElementById('trainingDataButton');
     const newQuestionButton = document.getElementById('newQuestion');
+
     const createButton = document.getElementById('createButton');
 
     const DDLButton = document.getElementById('DDLButton');
@@ -431,7 +444,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fetchTrainingData(); // 加载训练数据页面
             contentArea.style.display = 'block';
         }
-}
+    }
 
     function fetchFunctionsData() {
         const contentArea = document.getElementById('contentArea');
@@ -461,15 +474,46 @@ document.addEventListener('DOMContentLoaded', function() {
     function fetchTrainingData() {
         const contentArea = document.getElementById('contentArea');
         contentArea.innerHTML = `
-            <h2>Training Data</h2>
-            <p>Choose the type of training data your want to add.</p>
-        `
+            <h2>Add Training Data</h2>
+            <div id="trainingDataBox" class="training-box">
+                  <p>Training Data Type</p>
+                  <button id="DDLButton">DDL</button>
+                  <button id="DocumenButton">Documentation</button>
+                  <button id="SQLButton">SQL</button>
+                  <button id="QuestionButton">Question</button>
+            </div>
+
+            <p>Your SQL</p>
+            <div id="inputBox" class="input-box">
+                  <textarea id="inputSQL" placeholder="CREATE TABLE table_name(column_1 datatype,column_2 datatype,column_3 datatype)"></textarea>
+                  <button id="saveButton">Save</button>
+            </div>
+        `;
+
+        // 添加按钮事件监听
+        document.getElementById('DDLButton').addEventListener('click', () => updateInputBox(1, 'CREATE TABLE table_name(column_1 datatype,column_2 datatype,column_3 datatype)'));
+        document.getElementById('DocumenButton').addEventListener('click', () => updateInputBox(1, 'Our definition of ABC is XYZ'));
+        document.getElementById('SQLButton').addEventListener('click', () => updateInputBox(1, 'SELECT column_1,column_2 FROM table_name;'));
+        document.getElementById('QuestionButton').addEventListener('click', () => updateInputBox(2, '排名前10的作家有哪些？'));
+
         fetch('/api/training-data')
             .then((response) => response.json())
             .then((data) => {
                 contentArea.innerHTML = `<h2>Training Data Page</h2><p>${data.description}</p>`;
             })
             .catch((error) => console.error('Error fetching training data:', error));
+    }
+
+    function updateInputBox(boxCount, placeholder) {
+        const inputBox = document.getElementById('inputBox');
+        inputBox.innerHTML = '';
+
+        for(let i=0;i<boxCount;i++){
+            inputBox.innerHTML += `
+                <textarea placeholder="${placeholder}" style="width: 80%; height: 100px; font-size: 1em; margin-bottom: 10px;"></textarea>
+            `;
+        }
+        inputBox.innerHTML += `<button id="saveButton">Save</button>`;
     }
 });
 
