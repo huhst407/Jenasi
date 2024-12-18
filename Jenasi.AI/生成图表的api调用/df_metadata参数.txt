@@ -1,0 +1,35 @@
+![image-20241215021319450](image-20241215021319450.png)
+
+获取df_metadata代码示例：
+
+```
+import pandas as pd
+
+# 给定的数据
+data = [
+    {"gender": "男", "total_users": 5},
+    {"gender": "女", "total_users": 5}
+]
+
+# 将数据转换成 DataFrame
+df = pd.DataFrame(data)
+
+# 获取元数据
+df_metadata = {
+    "dtypes": df.dtypes.to_dict(),  # 列的数据类型，以字典形式返回
+    "nrows": len(df),  # DataFrame 的行数
+    "ncols": len(df.columns),  # DataFrame 的列数
+    "columns": df.columns.tolist(),  # 列名，以列表形式返回
+    "stats": {
+        "total_users": {
+            "sum": df["total_users"].sum(),  # total_users 列的总和
+            "mean": df["total_users"].mean(),  # total_users 列的平均值
+            "max": df["total_users"].max(),  # total_users 列的最大值
+            "min": df["total_users"].min()  # total_users 列的最小值
+        }
+    }
+}
+
+# 打印元数据查看结果
+print(df_metadata)
+```
